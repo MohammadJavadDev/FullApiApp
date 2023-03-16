@@ -33,6 +33,7 @@ namespace WebFramework.Middlewares
             _next = next;
             _env = env;
             _logger = logger;
+            
         }
 
         public async Task Invoke(HttpContext context)

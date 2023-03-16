@@ -16,9 +16,14 @@ namespace Host.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        public UserController(IUserRepository userRepository)
+        private readonly ILogger<UserController> _logger;
+
+ 
+
+        public UserController(IUserRepository userRepository , ILogger<UserController> logger)
         {
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -37,6 +42,7 @@ namespace Host.Controllers
         [HttpPost]
         public async Task<object> Create(User user, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Create User");
             await _userRepository.AddAsync(user, cancellationToken);
             return user;
         }

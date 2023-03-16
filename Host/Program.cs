@@ -2,14 +2,20 @@ using Data;
 using Data.Contracts;
 using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using NLog;
+using NLog.Fluent;
+using NLog.Web;
 using WebFramework.Middlewares;
 
 namespace Host
 {
+    
     public class Program
     {
+        
         public static void Main(string[] args)
         {
+ 
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRazorPages();
@@ -23,27 +29,49 @@ namespace Host
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-            var app = builder.Build();
+            builder.WebHost.ConfigureLogging(op => op.ClearProviders());
+            builder.WebHost.UseNLog();
 
-             if (!app.Environment.IsDevelopment())
-            {
-                //app.UseExceptionHandler("/Error");
-                 app.UseHsts();
-            }
-
-            app.UseCustomExceptionHandler();
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapControllers();
              
-          app.MapRazorPages();
-            app.Run();
+            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            try
+            {
+                logger.Error("init main");
+                var  app = builder.Build();
+                if (!app.Environment.IsDevelopment())
+                {
+ 
+                    app.UseHsts();
+                }
+ 
+
+                app.UseCustomExceptionHandler();
+
+                app.UseHttpsRedirection();
+                app.UseStaticFiles();
+
+                app.UseRouting();
+
+                app.UseAuthorization();
+
+                app.MapControllers();
+
+                app.MapRazorPages();
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+        
+                logger.Error(ex, "Stopped program because of exception");
+                throw;
+            }
+            finally
+            {
+               LogManager.Shutdown();
+            }
+          
+
+     
         }
     }
 }
