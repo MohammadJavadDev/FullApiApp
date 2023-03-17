@@ -1,10 +1,14 @@
-﻿using Data.Contracts;
+﻿using Common.Exceptions;
+using Data.Contracts;
 using Data.Repositories;
 using Entities.Users;
 using Host.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Services;
 using WebFramework.Api;
 using WebFramework.Filtters;
 
@@ -16,17 +20,21 @@ namespace Host.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IJwtService jwtService;
         private readonly ILogger<UserController> _logger;
 
- 
 
-        public UserController(IUserRepository userRepository , ILogger<UserController> logger)
+
+
+        public UserController(IUserRepository userRepository, ILogger<UserController> logger, IJwtService jwtService)
         {
             _userRepository = userRepository;
             _logger = logger;
+            this.jwtService = jwtService;
         }
 
         [HttpGet]
+   
         public async Task<ApiResult<List<User>>> Get()
         {
 
@@ -61,6 +69,17 @@ namespace Host.Controllers
             return Ok(updatedUser);
 
         }
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        public async Task<string> Loging(UserDto user, CancellationToken cancellationToken)
+        {
+            var d = await _userRepository.GetByUserAndPass(user.UserName, user.Password, cancellationToken);    
+            if(d == null)
+                throw new BadRequestException("نام کاربری یا رمز عبور اشتباه است");
+
+            return  jwtService.Generate(d);
+        }
+      
 
         [HttpDelete]
         public async Task<ActionResult> Delete (int id, CancellationToken cancellationToken)

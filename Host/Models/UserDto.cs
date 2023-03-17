@@ -11,8 +11,7 @@ namespace Host.Models
         [Required]
         [StringLength(500)]
         public string? Password { get; set; }
-        [Required]
-        [StringLength(100)]
+ 
         public string? FullName { get; set; }
 
         public Gender? Gender { get; set; }

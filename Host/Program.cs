@@ -5,7 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Fluent;
 using NLog.Web;
+using Services;
 using WebFramework.Middlewares;
+using WebFramework.Bootstrap;
+
 
 namespace Host
 {
@@ -28,15 +31,20 @@ namespace Host
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IJwtService, JwtService>();
 
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
             builder.WebHost.UseNLog();
 
-             
+            builder.Services.AddJwtAuthentication();
+           
+
+
+
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
-                logger.Error("init main");
+                //logger.Error("init main");
                 var  app = builder.Build();
                 if (!app.Environment.IsDevelopment())
                 {
@@ -46,13 +54,17 @@ namespace Host
  
 
                 app.UseCustomExceptionHandler();
-
+            
                 app.UseHttpsRedirection();
                 app.UseStaticFiles();
 
+            
+              
                 app.UseRouting();
 
-                app.UseAuthorization();
+                app.UseAuthentication();
+                 app.UseAuthorization();
+
 
                 app.MapControllers();
 

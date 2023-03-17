@@ -15,6 +15,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
+using MongoDB.Bson.IO;
+using System.Xml;
 
 namespace MJ.NLog.Mongo
 {
@@ -242,6 +244,12 @@ namespace MJ.NLog.Mongo
                         propertiesDocument[key] = new BsonString(value);
                     }
                 }
+                var requestBody = logEvent.Properties["RequestBody"];
+                if (requestBody != null)
+                {
+                    propertiesDocument["RequestBody"]  =  requestBody.ToBsonDocument();
+                    
+                }
 
                 if (propertiesDocument.ElementCount > 0)
                     document.Add("Properties", propertiesDocument);
@@ -266,11 +274,11 @@ namespace MJ.NLog.Mongo
                 }
             }
 
-            var document = new BsonDocument();
-            document.Add("Message", new BsonString(exception.Message));
-            document.Add("BaseMessage", new BsonString(exception.GetBaseException().Message));
-            document.Add("Text", new BsonString(exception.ToString()));
-            document.Add("Type", new BsonString(exception.GetType().ToString()));
+            var document = new BsonDocument()
+            .Add("Message", new BsonString(exception.Message))
+            .Add("BaseMessage", new BsonString(exception.GetBaseException().Message))
+            .Add("Text", new BsonString(exception.ToString()))
+          .Add("Type", new BsonString(exception.GetType().ToString()));
 
 #if !NETSTANDARD1_5
             if (exception is ExternalException external)

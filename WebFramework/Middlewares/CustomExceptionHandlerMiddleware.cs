@@ -1,4 +1,5 @@
-﻿using Common;
+﻿ 
+using Common;
 using Common.Exceptions;
 using Common.Utilities;
 using Microsoft.AspNetCore.Builder;
@@ -49,6 +50,12 @@ namespace WebFramework.Middlewares
             }
             catch (AppException exception)
             {
+                using var render = new StreamReader(context.Request.Body);
+                var text = render.ReadToEndAsync().Result;
+                render.Dispose();
+
+     
+
                 _logger.LogError(exception, exception.Message);
                 httpStatusCode = exception.HttpStatusCode;
                 apiStatusCode = exception.ApiStatusCode;
