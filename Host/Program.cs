@@ -8,7 +8,8 @@ using NLog.Web;
 using Services;
 using WebFramework.Middlewares;
 using WebFramework.Bootstrap;
-
+using Services.SdkServices;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Host
 {
@@ -22,8 +23,12 @@ namespace Host
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRazorPages();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(op =>
+            {
+                op.Filters.Add(new AuthorizeFilter());
+            });
             builder.Services.AddMvcCore();
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddDbContext<ApplicationDbContext>(option =>
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("Db"));
@@ -32,6 +37,7 @@ namespace Host
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
+            builder.Services.AddScoped<ISdk, Sdk>();
 
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
             builder.WebHost.UseNLog();

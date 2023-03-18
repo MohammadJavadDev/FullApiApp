@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
+using Services.SdkServices;
 using WebFramework.Api;
 using WebFramework.Filtters;
 
@@ -22,15 +23,16 @@ namespace Host.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IJwtService jwtService;
         private readonly ILogger<UserController> _logger;
+        private readonly ISdk _sdk;
 
 
 
-
-        public UserController(IUserRepository userRepository, ILogger<UserController> logger, IJwtService jwtService)
+        public UserController(IUserRepository userRepository, ILogger<UserController> logger, IJwtService jwtService, ISdk sdk)
         {
             _userRepository = userRepository;
             _logger = logger;
             this.jwtService = jwtService;
+            _sdk = sdk;
         }
 
         [HttpGet]
@@ -50,6 +52,7 @@ namespace Host.Controllers
         [HttpPost]
         public async Task<object> Create(User user, CancellationToken cancellationToken)
         {
+            var z = _sdk.CurrentUser.Id;
             _logger.LogInformation("Create User");
             await _userRepository.AddAsync(user, cancellationToken);
             return user;
@@ -73,11 +76,14 @@ namespace Host.Controllers
         [AllowAnonymous]
         public async Task<string> Loging(UserDto user, CancellationToken cancellationToken)
         {
+            
             var d = await _userRepository.GetByUserAndPass(user.UserName, user.Password, cancellationToken);    
             if(d == null)
                 throw new BadRequestException("نام کاربری یا رمز عبور اشتباه است");
 
             return  jwtService.Generate(d);
+
+            
         }
       
 

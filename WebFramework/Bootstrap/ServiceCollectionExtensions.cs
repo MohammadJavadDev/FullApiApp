@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Services;
+using Services.SdkServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace WebFramework.Bootstrap
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddJwtAuthentication (this IServiceCollection services)
+        public static void AddCommonServices (this IServiceCollection services)
         {
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -29,9 +30,12 @@ namespace WebFramework.Bootstrap
                         RequireSignedTokens = true,
                         RequireExpirationTime = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey))
+                        ,TokenDecryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey))
                     };
                 });
 
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<ISdk, Sdk>();
 
 
         }

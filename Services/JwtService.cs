@@ -23,6 +23,10 @@ namespace Services
                 SecurityAlgorithms.HmacSha256
                 );
 
+            var encriptionkey = Encoding.UTF8.GetBytes(JwtSettings.SecretKey);
+            var encriyptingCredentials = new EncryptingCredentials(new SymmetricSecurityKey(encriptionkey),
+                SecurityAlgorithms.HmacSha256);
+
             var claims = _getClamis(user);
 
             var descriptor = new SecurityTokenDescriptor
@@ -31,6 +35,7 @@ namespace Services
                 NotBefore = DateTime.Now,
                 Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = singingCredenatials,
+                EncryptingCredentials = encriyptingCredentials, 
                 Subject = new ClaimsIdentity(claims)
             };
 
