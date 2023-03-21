@@ -1,7 +1,9 @@
 ﻿using Common.Utilities;
 using Entities;
 using Entities.Users;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class ApplicationDbContext :DbContext
+    public class ApplicationDbContext :IdentityDbContext<User,Role,string>
     {
 
         public ApplicationDbContext(DbContextOptions options):base(options)
@@ -32,9 +34,20 @@ namespace Data
             modelBuilder.RegisterAllEntities<IEntity>(entitiesAssembly);
             modelBuilder.RegisterEntityTypeConfiguration(entitiesAssembly);
             modelBuilder.AddRestrictDeleteBehaviorConvention();
-            modelBuilder.AddSequentialGuidForIdConvention();
+           // modelBuilder.AddSequentialGuidForIdConvention();
             modelBuilder.AddSingularizingTableNameConvention();
         }
+
+        //public class ApplicationDbContextDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+        //{
+        //    public ApplicationDbContext CreateDbContext(string[] args)
+        //    {
+        //        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        //        optionsBuilder.UseSqlServer("Data Source=.; Initial Catalog=NewDb; User Id=sa; Password=Aa123456 ;TrustServerCertificate=True");
+
+        //        return new ApplicationDbContext(optionsBuilder.Options);
+        //    }
+        //}
 
         public override int SaveChanges()
         {

@@ -6,6 +6,7 @@ using Host.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -24,15 +25,20 @@ namespace Host.Controllers
         private readonly IJwtService jwtService;
         private readonly ILogger<UserController> _logger;
         private readonly ISdk _sdk;
+        private readonly UserManager<User> userManager;
+        private readonly RoleManager<Role> roleManager;
+        private readonly SignInManager<User> signInManager;
 
-
-
-        public UserController(IUserRepository userRepository, ILogger<UserController> logger, IJwtService jwtService, ISdk sdk)
+        public UserController(IUserRepository userRepository, ILogger<UserController> logger, IJwtService jwtService, ISdk sdk
+            ,UserManager<User> userManager,RoleManager<Role> roleManager , SignInManager<User> signInManager )
         {
             _userRepository = userRepository;
             _logger = logger;
             this.jwtService = jwtService;
             _sdk = sdk;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+            this.signInManager = signInManager;
         }
 
         [HttpGet]
@@ -43,19 +49,33 @@ namespace Host.Controllers
             var users = await _userRepository.TableNoTracking.ToListAsync();
             return users;
         }
-        [HttpGet("{id:int}")]
-        public async Task<ApiResult<User>> Get(int id,CancellationToken cancellationToken)
+        [HttpGet("{id:string}")]
+        [AllowAnonymous]
+        public async Task<ApiResult<User>> Get(string id,CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(cancellationToken, id);
+            var user = await userManager.FindByIdAsync(id);
+             
+            //var user = await _userRepository.GetByIdAsync(cancellationToken, id);
             return user;
         }
         [HttpPost]
+        [AllowAnonymous]
         public async Task<object> Create(User user, CancellationToken cancellationToken)
         {
-            var z = _sdk.CurrentUser.Id;
-            _logger.LogInformation("Create User");
-            await _userRepository.AddAsync(user, cancellationToken);
-            return user;
+         
+      var res = await  userManager.CreateAsync(user,user.PasswordHash);
+
+       var res2 =  await   roleManager.CreateAsync(new Role
+            {
+                Name = "Admin"
+            });
+
+        var res3=   await userManager.AddToRoleAsync(user, "Admin");
+
+
+            //_logger.LogInformation("Create User");
+            //await _userRepository.AddAsync(user, cancellationToken);
+            return new {res , res2 , res3 };
         }
 
         [HttpPut]
@@ -63,7 +83,7 @@ namespace Host.Controllers
         {
             var updatedUser = await _userRepository.GetByIdAsync(cancellationToken, id);
             updatedUser.UserName = user.UserName;
-            updatedUser.Password = user.Password;
+            updatedUser.PasswordHash = user.Password;
             updatedUser.FullName = user.FullName;
             updatedUser.Gender = user.Gender;
       

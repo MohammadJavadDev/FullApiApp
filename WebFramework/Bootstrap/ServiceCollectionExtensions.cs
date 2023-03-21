@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Data;
+using Entities.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -36,6 +38,18 @@ namespace WebFramework.Bootstrap
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<ISdk, Sdk>();
+
+            services.AddIdentity<User,Role>(op =>
+            {
+                op.Password.RequireNonAlphanumeric = false;
+                op.Password.RequireUppercase = false;
+                op.Password.RequireLowercase = false;
+
+                op.Lockout.MaxFailedAccessAttempts = 5;
+
+
+
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
 
 
         }

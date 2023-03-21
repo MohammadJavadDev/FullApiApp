@@ -33,20 +33,17 @@ namespace Host
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("Db"));
             });
+    
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IJwtService, JwtService>();
-            builder.Services.AddScoped<ISdk, Sdk>();
+
 
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
             builder.WebHost.UseNLog();
 
-            builder.Services.AddJwtAuthentication();
-           
-
-
-
+            builder.Services.AddCommonServices();
+ 
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {

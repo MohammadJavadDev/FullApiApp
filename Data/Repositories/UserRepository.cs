@@ -20,7 +20,7 @@ namespace Data.Repositories
         public  Task<User?> GetByUserAndPass(string username , string password , CancellationToken cancellationToken)
             {
             var passwordHash = SecurityHelper.GetSha256Hash(password);
-          return   TableNoTracking.Where(c => c.UserName == username && c.Password == passwordHash)
+          return   TableNoTracking.Where(c => c.UserName == username && c.PasswordHash == passwordHash)
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
@@ -33,7 +33,7 @@ namespace Data.Repositories
 
             }
 
-            entity.Password = SecurityHelper.GetSha256Hash(entity.Password);
+            entity.PasswordHash = SecurityHelper.GetSha256Hash(entity.PasswordHash);
 
              await base.AddAsync(entity, cancellationToken, saveNow);
         }
