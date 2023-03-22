@@ -8,6 +8,6 @@ namespace Services
 {
     public static class JwtSettings
     {
-        public const string SecretKey = "JavadKeyKeyJavad2";
+        public const string SecretKey = "JavadKeyKeyJavad2JavadKeyKeyJavad2";
     }
 }

@@ -1,6 +1,9 @@
 ﻿using Data;
 using Entities.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -16,8 +19,24 @@ namespace WebFramework.Bootstrap
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddCommonServices (this IServiceCollection services)
+        public static void AddCommonServices (this IServiceCollection services , ConfigurationManager configurationManager)
         {
+            services.AddRazorPages();
+
+            services.AddControllers(op =>
+            {
+                op.Filters.Add(new AuthorizeFilter());
+            });
+
+            services.AddMvc();
+
+            services.AddHttpContextAccessor();
+
+            services.AddDbContext<ApplicationDbContext>(option =>
+            {
+                option.UseSqlServer(configurationManager.GetConnectionString("Db"));
+            });
+
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -36,8 +55,7 @@ namespace WebFramework.Bootstrap
                     };
                 });
 
-            services.AddScoped<IJwtService, JwtService>();
-            services.AddScoped<ISdk, Sdk>();
+            
 
             services.AddIdentity<User,Role>(op =>
             {
@@ -46,12 +64,11 @@ namespace WebFramework.Bootstrap
                 op.Password.RequireLowercase = false;
 
                 op.Lockout.MaxFailedAccessAttempts = 5;
-
-
-
+                
+                
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-
+         
         }
     }
 }

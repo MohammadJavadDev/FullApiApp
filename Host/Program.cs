@@ -10,6 +10,10 @@ using WebFramework.Middlewares;
 using WebFramework.Bootstrap;
 using Services.SdkServices;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Autofac.Core;
+using Autofac;
 
 namespace Host
 {
@@ -19,31 +23,26 @@ namespace Host
         
         public static void Main(string[] args)
         {
- 
+
+
+
             var builder = WebApplication.CreateBuilder(args);
-
-            builder.Services.AddRazorPages();
-            builder.Services.AddControllers(op =>
-            {
-                op.Filters.Add(new AuthorizeFilter());
-            });
-            builder.Services.AddMvcCore();
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddDbContext<ApplicationDbContext>(option =>
-            {
-                option.UseSqlServer(builder.Configuration.GetConnectionString("Db"));
-            });
     
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
             builder.WebHost.UseNLog();
 
-            builder.Services.AddCommonServices();
- 
+            builder.Services.AddCommonServices(builder.Configuration);
+
+     
+
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBootsratp()));
+
+
+
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
@@ -88,5 +87,6 @@ namespace Host
 
      
         }
+
     }
 }

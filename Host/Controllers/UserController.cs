@@ -6,6 +6,7 @@ using Host.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,8 +50,8 @@ namespace Host.Controllers
             var users = await _userRepository.TableNoTracking.ToListAsync();
             return users;
         }
-        [HttpGet("{id:string}")]
-        [AllowAnonymous]
+        [HttpGet("{id}")]
+ 
         public async Task<ApiResult<User>> Get(string id,CancellationToken cancellationToken)
         {
             var user = await userManager.FindByIdAsync(id);
@@ -96,12 +97,23 @@ namespace Host.Controllers
         [AllowAnonymous]
         public async Task<string> Loging(UserDto user, CancellationToken cancellationToken)
         {
-            
-            var d = await _userRepository.GetByUserAndPass(user.UserName, user.Password, cancellationToken);    
-            if(d == null)
+             // var d = await _userRepository.GetByUserAndPass(user.UserName, , cancellationToken);    
+ 
+            var resUser = await userManager.FindByNameAsync(user.UserName);
+
+            if (resUser == null)
+            {
+                throw new BadRequestException("نام کاربری یا رمز عبور اشتباه است");
+            }
+
+      //      var ps = await userManager.CheckPasswordAsync(user, user.PasswordHash);
+
+          var ps = await signInManager.PasswordSignInAsync(resUser, user.Password, false, false);
+
+            if(!ps.Succeeded)
                 throw new BadRequestException("نام کاربری یا رمز عبور اشتباه است");
 
-            return  jwtService.Generate(d);
+            return await jwtService.GenerateAsync(resUser);
 
             
         }

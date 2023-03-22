@@ -1,4 +1,5 @@
-﻿using Common.Utilities;
+﻿using Common;
+using Common.Utilities;
 using Data.Contracts;
 using Entities;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Data.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity>
+    public class Repository<TEntity> : IRepository<TEntity>  ,IScopedDependency
        where TEntity : class, IEntity
     {
         protected readonly ApplicationDbContext DbContext;

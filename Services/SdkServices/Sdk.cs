@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Services.SdkServices
 {
-    public class Sdk : ISdk
+    public class Sdk : ISdk, ITransientDependency
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         public CurrentUser CurrentUser { get; private set; }
@@ -22,7 +22,7 @@ namespace Services.SdkServices
             var userIdentity = _httpContextAccessor.HttpContext.User.Identity;
             CurrentUser = new CurrentUser
             {
-                Id = userIdentity.GetUserId<int>(),
+                Id = userIdentity.GetUserId<string>(),
                 Username = userIdentity.GetUserName(),
                 FullName = userIdentity.FindFirstValue(ClaimTypes.GivenName),
                 
@@ -34,7 +34,7 @@ namespace Services.SdkServices
     }
     public class CurrentUser
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string? Username { get; set; }
         public string? FullName { get; set; }
         public Role[] roles { get; set; } = new Role[0];
