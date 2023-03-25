@@ -1,7 +1,7 @@
 ﻿using Entities.Users;
 using System.ComponentModel.DataAnnotations;
 
-namespace Host.Models
+namespace WebFramework.Models
 {
     public class UserDto
     {
@@ -11,13 +11,13 @@ namespace Host.Models
         [Required]
         [StringLength(500)]
         public string? Password { get; set; }
- 
+
         public string? FullName { get; set; }
 
         public Gender? Gender { get; set; }
 
- 
 
-        
+
+
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Data;
+using Data.Contracts;
+using Data.Repositories;
 using Entities.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -14,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebFramework.Mapper;
 
 namespace WebFramework.Bootstrap
 {
@@ -22,6 +25,7 @@ namespace WebFramework.Bootstrap
         public static void AddCommonServices (this IServiceCollection services , ConfigurationManager configurationManager)
         {
             services.AddRazorPages();
+            services.AddAutoMapper(typeof(ApplicationMapper));
 
             services.AddControllers(op =>
             {
@@ -31,6 +35,8 @@ namespace WebFramework.Bootstrap
             services.AddMvc();
 
             services.AddHttpContextAccessor();
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddDbContext<ApplicationDbContext>(option =>
             {

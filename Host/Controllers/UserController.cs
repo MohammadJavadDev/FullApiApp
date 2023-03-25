@@ -1,8 +1,8 @@
-﻿using Common.Exceptions;
+﻿using AutoMapper;
+using Common.Exceptions;
 using Data.Contracts;
 using Data.Repositories;
 using Entities.Users;
-using Host.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +14,7 @@ using Services;
 using Services.SdkServices;
 using WebFramework.Api;
 using WebFramework.Filtters;
+using WebFramework.Models;
 
 namespace Host.Controllers
 {
@@ -29,9 +30,10 @@ namespace Host.Controllers
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
         private readonly SignInManager<User> signInManager;
+        private readonly IMapper mapper;
 
         public UserController(IUserRepository userRepository, ILogger<UserController> logger, IJwtService jwtService, ISdk sdk
-            ,UserManager<User> userManager,RoleManager<Role> roleManager , SignInManager<User> signInManager )
+            , UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, IMapper mapper)
         {
             _userRepository = userRepository;
             _logger = logger;
@@ -40,6 +42,7 @@ namespace Host.Controllers
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.signInManager = signInManager;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -82,14 +85,18 @@ namespace Host.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(int id , UserDto user, CancellationToken cancellationToken)
         {
-            var updatedUser = await _userRepository.GetByIdAsync(cancellationToken, id);
-            updatedUser.UserName = user.UserName;
-            updatedUser.PasswordHash = user.Password;
-            updatedUser.FullName = user.FullName;
-            updatedUser.Gender = user.Gender;
-      
-            
-            await _userRepository.UpdateAsync(updatedUser,cancellationToken);
+
+
+            //var updatedUser = await _userRepository.GetByIdAsync(cancellationToken, id);
+            //updatedUser.UserName = user.UserName;
+            //updatedUser.PasswordHash = user.Password;
+            //updatedUser.FullName = user.FullName;
+            //updatedUser.Gender = user.Gender;
+
+            var updatedUser  = mapper.Map<User>(user);
+
+
+            await userManager.UpdateAsync(updatedUser);
             return Ok(updatedUser);
 
         }

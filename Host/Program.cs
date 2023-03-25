@@ -24,25 +24,12 @@ namespace Host
         public static void Main(string[] args)
         {
 
-
-
             var builder = WebApplication.CreateBuilder(args);
-    
-
-
-
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
             builder.WebHost.UseNLog();
-
             builder.Services.AddCommonServices(builder.Configuration);
-
-     
-
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBootsratp()));
-
-
-
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
