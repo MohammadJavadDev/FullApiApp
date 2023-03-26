@@ -3,13 +3,13 @@ using AutoMapper.QueryableExtensions;
 using Common.Exceptions;
 using Data.Contracts;
 using Entities.Posts;
+using Host.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebFramework.Api;
 using WebFramework.Filtters;
-using WebFramework.Models;
 
 namespace Host.Controllers
 {
@@ -39,6 +39,7 @@ namespace Host.Controllers
             var pp = await repository.TableNoTracking
                 .ProjectTo<PostViewModel>(mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(c => c.Id == id);
+
             if (pp == null)
                 throw new NotFoundException("هیچ پستی با این شناسه یافت نشد.");
 
@@ -48,7 +49,7 @@ namespace Host.Controllers
         [HttpPost]
         public ApiResult Create(PostViewModel post)
         {
-            var pp = mapper.Map<Post>(post);
+            var pp = post.ToEntity();
             repository.Add(pp);
             return  Ok();
         }
@@ -56,8 +57,14 @@ namespace Host.Controllers
  
 
         [HttpPut]
-        public ActionResult Update(int id)
+        public ActionResult Update(PostViewModel model, int id)
         {
+            var oldModel =repository.GetById(id);
+
+            var newModel = model.ToEntity(oldModel);
+
+            repository.Update(newModel);
+
             return View();
         }
 

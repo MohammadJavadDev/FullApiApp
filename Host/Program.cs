@@ -14,6 +14,8 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Autofac.Core;
 using Autofac;
+using AutoMapper;
+using WebFramework.Mapper;
 
 namespace Host
 {
@@ -28,9 +30,16 @@ namespace Host
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
             builder.WebHost.UseNLog();
             builder.Services.AddCommonServices(builder.Configuration);
+            builder.Services.InitilizeAutoMapper();
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBootsratp()));
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+
+
+
+          
+
+            
             try
             {
                 //logger.Error("init main");
@@ -41,7 +50,7 @@ namespace Host
                     app.UseHsts();
                 }
  
-
+                    
                 app.UseCustomExceptionHandler();
             
                 app.UseHttpsRedirection();

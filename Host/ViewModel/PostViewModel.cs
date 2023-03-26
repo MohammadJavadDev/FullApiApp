@@ -1,10 +1,13 @@
-﻿ 
+﻿using AutoMapper;
+using Entities.Posts;
+using WebFramework.Api;
 
-namespace WebFramework.Models
+namespace Host.ViewModel
 {
-    public class PostViewModel
+    public class PostViewModel:BaseViewModel<PostViewModel, Post,int>
     {
-        public int Id { get; set; }
+ 
+
         public string? Title { get; set; }
         public string? Description { get; set; }
         public int CategoryId { get; set; }

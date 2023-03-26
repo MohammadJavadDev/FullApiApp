@@ -3,6 +3,7 @@ using Common.Exceptions;
 using Data.Contracts;
 using Data.Repositories;
 using Entities.Users;
+using Host.ViewModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +15,6 @@ using Services;
 using Services.SdkServices;
 using WebFramework.Api;
 using WebFramework.Filtters;
-using WebFramework.Models;
 
 namespace Host.Controllers
 {
@@ -83,7 +83,7 @@ namespace Host.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(int id , UserDto user, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(int id , UserViewModel user, CancellationToken cancellationToken)
         {
 
 
@@ -102,7 +102,7 @@ namespace Host.Controllers
         }
         [HttpPost("[action]")]
         [AllowAnonymous]
-        public async Task<string> Loging(UserDto user, CancellationToken cancellationToken)
+        public async Task<string> Loging(UserViewModel user, CancellationToken cancellationToken)
         {
              // var d = await _userRepository.GetByUserAndPass(user.UserName, , cancellationToken);    
  
