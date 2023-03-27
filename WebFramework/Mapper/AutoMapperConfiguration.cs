@@ -38,7 +38,7 @@ namespace WebFramework.Mapper
             && c.GetInterfaces().Contains(typeof(IHaveCustomMapping)))
                 .Select(c=>(IHaveCustomMapping)Activator.CreateInstance(c));
 
-            config.AddProfile(new CustomMappingProfiule(list));
+            config.AddProfile(new CustomMappingProfile(list));
         }
     }
 }

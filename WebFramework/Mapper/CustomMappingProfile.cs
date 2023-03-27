@@ -2,10 +2,10 @@
 
 namespace WebFramework.Mapper
 {
-    internal class CustomMappingProfiule : Profile
+    internal class CustomMappingProfile : Profile
     {
  
-        public CustomMappingProfiule(IEnumerable<IHaveCustomMapping?> list)
+        public CustomMappingProfile(IEnumerable<IHaveCustomMapping?> list)
         {
             foreach(var item in list)
             {

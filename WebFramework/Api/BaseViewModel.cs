@@ -1,15 +1,21 @@
 ﻿using AutoMapper;
 using Entities;
- 
+using Entities.Posts;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using WebFramework.Mapper;
 
 namespace WebFramework.Api
 {
-    public  class BaseViewModel<TViewModel, TEntity, TKey> : IHaveCustomMapping
+    public abstract class BaseViewModel<TViewModel, TEntity, TKey>  
         where TViewModel : class, new()
         where TEntity : BaseEntity<TKey>, new()
     {
-        public   IMapper mapper;
+        private readonly IMapper mapper;
 
         public BaseViewModel(IMapper mapper)
         {
@@ -26,10 +32,7 @@ namespace WebFramework.Api
 
         public bool IsActive { get; set; }
 
-        public void CreateMappings(Profile profile)
-        {
-            profile.CreateMap<TEntity, TViewModel>().ReverseMap();
-        }
+ 
 
         public TEntity ToEntity()
         {  
@@ -48,6 +51,16 @@ namespace WebFramework.Api
         protected TViewModel CastToDerivedClass(BaseViewModel<TViewModel, TEntity, TKey> baseViewModel)
         {
             return mapper.Map<TViewModel>(baseViewModel);
+        }
+
+        public virtual TViewModel Map(TEntity entity)
+        {
+            return mapper.Map<TViewModel>(entity);
+        }
+
+        public virtual TEntity Map(TViewModel dto)
+        {
+            return mapper.Map<TEntity>(dto);
         }
     }
 }

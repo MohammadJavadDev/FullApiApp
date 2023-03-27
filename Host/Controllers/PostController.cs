@@ -21,10 +21,11 @@ namespace Host.Controllers
         private readonly IRepository<Post> repository;
         private readonly IMapper mapper;
 
-        public PostController(IRepository<Post> repository, IMapper mapper = null)
+        public PostController(IRepository<Post> repository, IMapper mapper  )
         {
             this.repository = repository;
             this.mapper = mapper;
+          
         }
 
         [HttpGet]
@@ -36,20 +37,23 @@ namespace Host.Controllers
         [HttpGet("{id:int}")]
         public async Task<object> FindById(int id)
         {
-            var pp = await repository.TableNoTracking
-                .ProjectTo<PostViewModel>(mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            //var pp = await repository.TableNoTracking
+            //    .ProjectTo<PostViewModel>(mapper.ConfigurationProvider)
+            //    .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (pp == null)
-                throw new NotFoundException("هیچ پستی با این شناسه یافت نشد.");
+            //if (pp == null)
+            //    throw new NotFoundException("هیچ پستی با این شناسه یافت نشد.");
 
-            var postVm = mapper.Map<PostViewModel>(pp);
-            return postVm;
+            //var postVm = mapper.Map<PostViewModel>(pp);
+            //return postVm;
+            return new { };
         }
         [HttpPost]
         public ApiResult Create(PostViewModel post)
         {
-            var pp = post.ToEntity();
+            var mapperpost = new PostViewModelMapper(mapper);
+          var pp = mapperpost.Map(post);
+ 
             repository.Add(pp);
             return  Ok();
         }
@@ -59,11 +63,11 @@ namespace Host.Controllers
         [HttpPut]
         public ActionResult Update(PostViewModel model, int id)
         {
-            var oldModel =repository.GetById(id);
+            //var oldModel =repository.GetById(id);
 
-            var newModel = model.ToEntity(oldModel);
+            //var newModel = model.Map(oldModel);
 
-            repository.Update(newModel);
+            //repository.Update(newModel);
 
             return View();
         }
