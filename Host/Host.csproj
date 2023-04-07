@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MJ.EntityFramwork\MJ.EntityFramwork.csproj" />
     <ProjectReference Include="..\MJ.NLog.Mongo\MJ.NLog.Mongo.csproj" />
     <ProjectReference Include="..\WebFramework\WebFramework.csproj" />
   </ItemGroup>

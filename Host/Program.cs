@@ -16,6 +16,8 @@ using Autofac.Core;
 using Autofac;
 using AutoMapper;
 using WebFramework.Mapper;
+using MJ.EntityFramwork;
+using MJ.EntityFramwork.TableGenerate;
 
 namespace Host
 {
@@ -25,6 +27,8 @@ namespace Host
         
         public static void Main(string[] args)
         {
+
+            CreateClass.CreateClassFromDB("Data Source=.;Initial Catalog=CRM;User ID=sa;Password=123456", @"F:\Projects\BaseApi\Entities");
 
             var builder = WebApplication.CreateBuilder(args);
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
