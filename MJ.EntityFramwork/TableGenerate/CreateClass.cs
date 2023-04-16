@@ -13,7 +13,6 @@ namespace MJ.EntityFramwork.TableGenerate
             SqlConnection connection = new SqlConnection(stringConnetion);
             connection.Open();
 
-            // Retrieve information about the columns in the table
             SqlCommand command = new SqlCommand($@"
                     SELECT COLUMN_NAME, 
                     DATA_TYPE,
@@ -25,7 +24,6 @@ namespace MJ.EntityFramwork.TableGenerate
           
             SqlDataReader reader = command.ExecuteReader();
 
-            // Create a list of properties based on the columns in the table
             List<string> properties = new List<string>();
             while (reader.Read())
             {
@@ -135,7 +133,6 @@ namespace MJ.EntityFramwork.TableGenerate
 
             reader = command.ExecuteReader();
 
-            // Create a list of foreign keys based on the foreign keys in the table
             List<string> foreignKeys = new List<string>();
             while (reader.Read())
             {
@@ -151,7 +148,7 @@ namespace MJ.EntityFramwork.TableGenerate
             }
             reader.Close();
 
-            // Retrieve information about the primary key in the table
+      
             command = new SqlCommand(@$"
             SELECT
                 tc.CONSTRAINT_NAME AS PrimaryKeyName,
@@ -163,7 +160,7 @@ namespace MJ.EntityFramwork.TableGenerate
                 tc.TABLE_NAME = '{tableNameCreate}' AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY' AND ccu.TABLE_SCHEMA = '{tableSchemaCreate}'", connection);
             reader = command.ExecuteReader();
 
-            // Create a list of properties for the primary key
+         
             List<string> primaryKeyProperties = new List<string>();
             while (reader.Read())
             {
@@ -175,11 +172,10 @@ namespace MJ.EntityFramwork.TableGenerate
             }
             reader.Close();
 
-            // Combine all the properties and foreign keys into a single class definition
             string className = tableNameCreate;
             string classCode = $"using System.ComponentModel.DataAnnotations;\nusing System.ComponentModel.DataAnnotations.Schema;\nnamespace Entities.Generated {{ \n[Table(\"{tableNameCreate}\",Schema =\"{tableSchemaCreate}\")] \n public class {tableSchemaCreate}{className} {{\n{string.Join("\n", primaryKeyProperties)}\n{string.Join("\n", properties)}\n{string.Join("\n", foreignKeys)}\n}} \n}}";
 
-            // Write the class code to a file
+          
             string filePath = $"{path}/{tableSchemaCreate}/{tableSchemaCreate}{className}.cs";
             string dir = $"{path}/{tableSchemaCreate}";
             if (!Directory.Exists(dir))
