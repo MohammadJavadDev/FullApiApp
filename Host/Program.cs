@@ -28,8 +28,7 @@ namespace Host
         public static void Main(string[] args)
         {
 
-            CreateClass.CreateClassFromDB("Data Source=.;Initial Catalog=CRM;User ID=sa;Password=123456", @"F:\Projects\BaseApi\Entities");
-
+         
             var builder = WebApplication.CreateBuilder(args);
             builder.WebHost.ConfigureLogging(op => op.ClearProviders());
             builder.WebHost.UseNLog();
@@ -40,10 +39,6 @@ namespace Host
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
 
-
-          
-
-            
             try
             {
                 //logger.Error("init main");

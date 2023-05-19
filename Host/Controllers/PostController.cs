@@ -43,9 +43,8 @@ namespace Host.Controllers
 
             //if (pp == null)
             //    throw new NotFoundException("هیچ پستی با این شناسه یافت نشد.");
+ 
 
-            //var postVm = mapper.Map<PostViewModel>(pp);
-            //return postVm;
             return new { };
         }
         [HttpPost]

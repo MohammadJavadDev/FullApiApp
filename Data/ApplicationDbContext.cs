@@ -2,8 +2,11 @@
 using Entities;
 using Entities.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +17,7 @@ namespace Data
 {
     public class ApplicationDbContext :IdentityDbContext<User,Role,string>
     {
-
+        public string _connectionString { get; set; }
         public ApplicationDbContext(DbContextOptions options):base(options)
         {
             
@@ -28,6 +31,7 @@ namespace Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
+            
             base.OnModelCreating(modelBuilder);
 
             var entitiesAssembly = typeof(IEntity).Assembly;
@@ -38,16 +42,7 @@ namespace Data
             modelBuilder.AddSingularizingTableNameConvention();
         }
 
-        //public class ApplicationDbContextDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
-        //{
-        //    public ApplicationDbContext CreateDbContext(string[] args)
-        //    {
-        //        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        //        optionsBuilder.UseSqlServer("Data Source=.; Initial Catalog=NewDb; User Id=sa; Password=Aa123456 ;TrustServerCertificate=True");
-
-        //        return new ApplicationDbContext(optionsBuilder.Options);
-        //    }
-        //}
+ 
 
         public override int SaveChanges()
         {
@@ -105,6 +100,83 @@ namespace Data
 
 
         }
- 
+
+        public int ExecuteCommand(string query, object parameters = null)
+        {
+            int affectedRows = 0;
+            using (var connection = new SqlConnection(Database.GetConnectionString()))
+            {
+                using (var command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    if (parameters != null)
+                    {
+                        foreach (var prop in parameters.GetType().GetProperties())
+                        {
+                            command.Parameters.AddWithValue($"@{prop.Name}", prop.GetValue(parameters));
+                        }
+                    }
+                    affectedRows = command.ExecuteNonQuery();
+                }
+            }
+            return affectedRows;
+        }
+
+        public IEnumerable<TEntity> ExecuteQuery<TEntity>(string query, object parameters = null) where TEntity : new()
+        {
+            var results = new List<TEntity>();
+            using (var connection = new SqlConnection(Database.GetConnectionString()))
+            {
+                using (var command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    if (parameters != null)
+                    {
+                        foreach (var prop in parameters.GetType().GetProperties())
+                        {
+                            command.Parameters.AddWithValue($"@{prop.Name}", prop.GetValue(parameters));
+                        }
+                    }
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var entity = new TEntity();
+
+                            for (var i = 0; i < reader.FieldCount; i++)
+                            {
+                                var propertyName = reader.GetName(i);
+                                var property = entity.GetType().GetProperty(propertyName);
+
+                                if (property != null && !reader.IsDBNull(i))
+                                {
+                                    var value = reader.GetValue(i);
+                                    var propertyType = property.PropertyType;
+
+                                    if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                                    {
+                                        propertyType = Nullable.GetUnderlyingType(propertyType);
+                                    }
+
+                                    if (propertyType.IsEnum)
+                                    {
+                                        var enumValue = (Enum)Enum.ToObject(propertyType, value);
+                                        property.SetValue(entity, enumValue);
+                                    }
+                                    else
+                                    {
+                                        property.SetValue(entity, value);
+                                    }
+                                }
+                            }
+
+                            results.Add(entity);
+                        }
+                    }
+                }
+            }
+            return results;
+        }
+
     }
 }
