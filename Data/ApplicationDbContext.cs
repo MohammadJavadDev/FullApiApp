@@ -1,5 +1,6 @@
 ﻿using Common.Utilities;
 using Entities;
+using Entities.CRM;
 using Entities.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class ApplicationDbContext :IdentityDbContext<User,Role,string>
+    public class ApplicationDbContext : DbContext
     {
 
         public ApplicationDbContext(DbContextOptions options):base(options)
@@ -27,15 +28,27 @@ namespace Data
         //}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Contact>().ToTable("Contact", schema: "itnj");
+            modelBuilder.Entity<ContactPSPDocument>().ToTable("ContactPSPDocument", schema: "itnj");
+            modelBuilder.Entity<ContactPSPDocumentUrl>().ToTable("ContactPSPDocumentUrl", schema: "itnj");
+            modelBuilder.Entity<Reception>().ToTable("Reception", schema: "itnj");
+            modelBuilder.Entity<PSPDocument>().ToTable("PSPDocument", schema: "itnj");
+            modelBuilder.Entity<UserCrm>().ToTable("User",schema: "security");
+            modelBuilder.Entity<vw_MultiContactPspAccount>().ToView("vw_MultiContactPspAccount", schema: "itnj")
+                .HasNoKey();
+            
+
+            
+
             var entitiesAssembly = typeof(IEntity).Assembly;
-            modelBuilder.RegisterAllEntities<IEntity>(entitiesAssembly);
-            modelBuilder.RegisterEntityTypeConfiguration(entitiesAssembly);
-            modelBuilder.AddRestrictDeleteBehaviorConvention();
+          //  modelBuilder.RegisterAllEntities<IEntity>(entitiesAssembly);
+          //  modelBuilder.RegisterEntityTypeConfiguration(entitiesAssembly);
+           // modelBuilder.AddRestrictDeleteBehaviorConvention();
            // modelBuilder.AddSequentialGuidForIdConvention();
-            modelBuilder.AddSingularizingTableNameConvention();
+        //    modelBuilder.AddSingularizingTableNameConvention();
         }
 
         //public class ApplicationDbContextDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>

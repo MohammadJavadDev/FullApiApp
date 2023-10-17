@@ -24,15 +24,15 @@ namespace WebFramework.Middlewares
     public class CustomExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IHostingEnvironment _env;
+    
         private readonly ILogger<CustomExceptionHandlerMiddleware> _logger;
 
         public CustomExceptionHandlerMiddleware(RequestDelegate next,
-            IHostingEnvironment env,
+           
             ILogger<CustomExceptionHandlerMiddleware> logger)
         {
             _next = next;
-            _env = env;
+ 
             _logger = logger;
             
         }
@@ -60,8 +60,8 @@ namespace WebFramework.Middlewares
                 httpStatusCode = exception.HttpStatusCode;
                 apiStatusCode = exception.ApiStatusCode;
 
-                if (_env.IsDevelopment())
-                {
+                //if (_env.IsDevelopment())
+                //{
                     var dic = new Dictionary<string, string>
                     {
                         ["Exception"] = exception.Message,
@@ -76,11 +76,11 @@ namespace WebFramework.Middlewares
                         dic.Add("AdditionalData", exception.AdditionalData.JsonSerialize());
                     message = exception.Message;
                     errors =  dic;
-                }
-                else
-                {
-                    message = exception.Message;
-                }
+                //}
+                //else
+                //{
+                //    message = exception.Message;
+                //}
                 await WriteToResponseAsync();
             }
             catch (SecurityTokenExpiredException exception)
@@ -99,8 +99,8 @@ namespace WebFramework.Middlewares
             {
                 _logger.LogError(exception, exception.Message);
 
-                if (_env.IsDevelopment())
-                {
+                //if (_env.IsDevelopment())
+                //{
                     var dic = new Dictionary<string, string>
                     {
                         ["Exception"] = exception.Message,
@@ -108,7 +108,7 @@ namespace WebFramework.Middlewares
                     };
                     message = exception.Message;
                     errors = dic ;
-                }
+                //}
                 await WriteToResponseAsync();
             }
 
@@ -121,7 +121,7 @@ namespace WebFramework.Middlewares
                 var json = result.JsonSerialize();
 
                 context.Response.StatusCode = (int)httpStatusCode;
-                context.Response.ContentType = "application/json";
+                context.Response.ContentType = "application/json;charset=utf-8";
                 await context.Response.WriteAsync(json);
             }
 
@@ -130,8 +130,8 @@ namespace WebFramework.Middlewares
                 httpStatusCode = HttpStatusCode.Unauthorized;
                 apiStatusCode = ApiResultStatusCode.UnAuthorized;
 
-                if (_env.IsDevelopment())
-                {
+                //if (_env.IsDevelopment())
+                //{
                     var dic = new Dictionary<string, string>
                     {
                         ["Exception"] = exception.Message,
@@ -142,7 +142,7 @@ namespace WebFramework.Middlewares
 
                     errors = dic;
                     message = exception.Message;
-                }
+                //}
             }
         }
     }

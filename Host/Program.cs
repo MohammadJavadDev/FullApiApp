@@ -14,40 +14,36 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Autofac.Core;
 using Autofac;
-
+using Common.Utilities;
 namespace Host
 {
-    
+
+ 
     public class Program
     {
         
         public static void Main(string[] args)
         {
 
-
+         
 
             var builder = WebApplication.CreateBuilder(args);
-    
-
-
-
-            builder.WebHost.ConfigureLogging(op => op.ClearProviders());
-            builder.WebHost.UseNLog();
-
+          //  builder.WebHost.ConfigureLogging(op => op.ClearProviders());
+         //   builder.WebHost.UseNLog();
             builder.Services.AddCommonServices(builder.Configuration);
 
-     
+           
 
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBootsratp()));
+         // builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+         //  builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBootsratp()));
 
+            //   var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
-
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
                 //logger.Error("init main");
                 var  app = builder.Build();
+               
                 if (!app.Environment.IsDevelopment())
                 {
  
@@ -64,8 +60,8 @@ namespace Host
               
                 app.UseRouting();
 
-                app.UseAuthentication();
-                 app.UseAuthorization();
+            //    app.UseAuthentication();
+              //   app.UseAuthorization();
 
 
                 app.MapControllers();
@@ -76,12 +72,12 @@ namespace Host
             catch (Exception ex)
             {
         
-                logger.Error(ex, "Stopped program because of exception");
+             //   logger.Error(ex, "Stopped program because of exception");
                 throw;
             }
             finally
             {
-               LogManager.Shutdown();
+            //   LogManager.Shutdown();
             }
           
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Data.Contracts
 {
-    public interface IRepository<TEntity> where TEntity : class, IEntity  
+    public interface IRepository<TEntity> where TEntity : class
     {
         DbSet<TEntity> Entities { get; }
         IQueryable<TEntity> Table { get; }

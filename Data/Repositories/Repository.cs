@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Data.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity>  ,IScopedDependency
-       where TEntity : class, IEntity
+       where TEntity : class
     {
         protected readonly ApplicationDbContext DbContext;
         public DbSet<TEntity> Entities { get; }
@@ -29,11 +29,12 @@ namespace Data.Repositories
         #region Async Method
         public virtual Task<TEntity> GetByIdAsync(CancellationToken cancellationToken, params object[] ids)
         {
-          
+         
           var s = Entities.FindAsync(ids, cancellationToken);
             return s.AsTask();
         }
 
+  
         public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken, bool saveNow = true)
         {
             Assert.NotNull(entity, nameof(entity));

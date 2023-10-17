@@ -2,9 +2,14 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+   var styleWarpper = "style=\" background: rgb(2,0,36)!important;background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgb(255 255 255) 49%, rgb(0 174 239) 100%)!important;\"";
+
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core"
+        @styleWarpper
+    
+    >building Web apps with ASP.NET Core</a>.</p>
 </div>

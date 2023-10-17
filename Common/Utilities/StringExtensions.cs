@@ -22,6 +22,8 @@ namespace Common.Utilities
         {
             return Convert.ToDecimal(value);
         }
+       
+
 
         public static string ToNumeric(this int value)
         {
