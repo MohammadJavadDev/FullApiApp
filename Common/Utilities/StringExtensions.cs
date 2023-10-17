@@ -108,5 +108,25 @@ namespace Common.Utilities
         {
             return str?.Length == 0 ? null : str;
         }
+
+        public static string CapitalizeFirst(this string input)
+        {
+           return char.ToUpper(input[0]) + input[1..]; // captalizes first letter
+        }
+
+        // first letter of each word
+        public static string CapitalizeAll(this string input)
+        {
+            var words = input.Split(' '); // create array of words
+
+            // loop through all words and capitalize them
+            for (int i = 0; i < words.Length; i++)
+            {
+                words[i] = CapitalizeFirst(words[i]);
+            }
+
+            return string.Join(' ', words);
+        }
+
     }
 }

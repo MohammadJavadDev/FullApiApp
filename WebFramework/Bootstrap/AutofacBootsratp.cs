@@ -26,6 +26,8 @@ namespace WebFramework.Bootstrap
             var dataAssembly = typeof(ApplicationDbContext).Assembly;
             var servicesAssembly = typeof(JwtService).Assembly;
 
+ 
+
             builder.RegisterAssemblyTypes(commonAssembly, entityiesAssembly,
                 dataAssembly, servicesAssembly)
                 .AssignableTo<IScopedDependency>()

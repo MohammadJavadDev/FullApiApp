@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Entities.Users
 {
-
+    [Table("AspNetUser", Schema = "dbo")]
     public class User : IdentityUser,IEntity
     {
   
@@ -27,8 +28,8 @@ namespace Entities.Users
     public enum Gender
     {
         [Display(Name = "خانم")]
-        Woman = 0,
+        Woman ,
         [Display(Name = "آقا")]
-        Man = 1
+        Man 
     }
 }
