@@ -65,6 +65,9 @@ namespace Host.Controllers
             var newDb = new NewCrmDbContext();
 
 
+            
+
+
             if (m.NationalCode != null)
             {
                 var rep = await _contactRepository.TableNoTracking.FirstOrDefaultAsync(c => c.NationalCode == m.NationalCode && c.Mode == 1);
