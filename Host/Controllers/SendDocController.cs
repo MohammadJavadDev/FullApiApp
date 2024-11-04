@@ -64,9 +64,7 @@ namespace Host.Controllers
 
             var newDb = new NewCrmDbContext();
 
-
-            
-
+ 
 
             if (m.NationalCode != null)
             {
@@ -309,7 +307,7 @@ namespace Host.Controllers
 
                     }
 
-                    neDoc.images = docUrl.JsonSerialize().JsonDeserialize<List<ImagesDoc>>();
+                    neDoc.images =  new List<ImagesDoc>();
 
 
 
@@ -318,27 +316,27 @@ namespace Host.Controllers
 
                     foreach (var d in listResult.Last().images)
                     {
-                        try
-                        {
-                            d.DocumentId = (Guid)_PSPDocumentRepository.TableNoTracking.Where(c => c.Id == d.PSPDocumentId).FirstOrDefault().TitleId;
+                    //    try
+                    //    {
+                    //        d.DocumentId = (Guid)_PSPDocumentRepository.TableNoTracking.Where(c => c.Id == d.PSPDocumentId).FirstOrDefault().TitleId;
 
-                            var byteData = System.IO.File.ReadAllBytes($@"D:\CRM\APP{d.Url}");
-                            d.ContentByte = byteData ?? new byte[0];
-                        }
-                        catch(Exception e)
-                            {
-                        d.ContentByte =   new byte[0];
-                    }
+                    //        var byteData = System.IO.File.ReadAllBytes($@"D:\CRM\APP{d.Url}");
+                    //        d.ContentByte = byteData ?? new byte[0];
+                    //    }
+                    //    catch(Exception e)
+                    //        {
+                    //    d.ContentByte =   new byte[0];
+                    //}
                         
                     }
 
-                    for(var z =0; z <= listResult.Last().images.Count; z++)
-                    {
-                        if (listResult.Last().images.Count > z && listResult.Last().images[z].ContentByte.Length ==0 )
-                        {
-                          listResult.Last().images.Remove(listResult.Last().images[z]);
-                        }
-                    }
+                    //for(var z =0; z <= listResult.Last().images.Count; z++)
+                    //{
+                    //    if (listResult.Last().images.Count > z && listResult.Last().images[z].ContentByte.Length ==0 )
+                    //    {
+                    //      listResult.Last().images.Remove(listResult.Last().images[z]);
+                    //    }
+                    //}
                     
 
 
